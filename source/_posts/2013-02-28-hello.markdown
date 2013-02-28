@@ -1,0 +1,8 @@
+---
+layout: post
+title: "第一篇博客在octopress"
+date: 2013-02-28 09:33
+comments: true
+categories: 
+---
+今天在gitpage上建立了自己的博客，留此作为纪念。
