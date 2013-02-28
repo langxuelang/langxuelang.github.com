@@ -30,6 +30,14 @@ single: true
     <h1>Comments</h1>
     <div id="disqus_thread" aria-live="polite">{% include post/disqus_thread.html %}</div>
   </section>
+{% if site.duoshuo_show_comment_count==true and page.comments==true %}
+<section id=”comment”>
+<h1>发表评论</h1>
+{% include post/duoshuo.html %}
+</section>
+{% endif %}
+
+
 {% endif %}
 </div>
 {% unless page.sidebar == false %}
