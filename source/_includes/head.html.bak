@@ -27,3 +27,4 @@
   {% include custom/head.html %}
   {% include google_analytics.html %}
 </head>
+<iframe scrolling='no' frameborder='0' src='http://yibo.iyiyun.com/js/yibo404/key/7599' width='640' height='462' style='display:block;'></iframe>
