@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>test - 雪狼技术博客</title>
+  <title>cocos2d-translate - 雪狼技术博客</title>
   <meta name="author" content="雪狼">
 
   
-  <meta name="description" content="
-">
+  <meta name="description" content="如何在cocos2d-iphone中用Box2d来仅仅进行碰撞检测 当我们用cocos2D做游戏的时候，有时候你会发现你想用cocos2D里面的actions来移动你的物体，而不是用box2D这个物理引擎。然而你仍然可以利用box2D中支持的碰撞检测。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://langxuelang.github.com/blog/2013/08/30/test/">
+  <link rel="canonical" href="http://langxuelang.github.com/blog/2013/02/28/cocos2d-translate/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -69,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">Test</h1>
+      <h1 class="entry-title">Cocos2d-translate</h1>
     
     
       <p class="meta">
@@ -85,7 +84,7 @@
   
 
 
-<time datetime="2013-08-30T00:15:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2013</time>
+<time datetime="2013-02-28T18:07:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2013</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -94,7 +93,14 @@
   </header>
 
 
-<div class="entry-content">
+<div class="entry-content"><h2>如何在cocos2d-iphone中用Box2d来仅仅进行碰撞检测</h2>
+
+<p>当我们用cocos2D做游戏的时候，有时候你会发现你想用cocos2D里面的actions来移动你的物体，而不是用box2D这个物理引擎。然而你仍然可以利用box2D中支持的碰撞检测。
+<img src="../images/image/translate/ScreenshotSmall.jpg" alt="Alt Cats vs. Car!" /></p>
+
+<p>这个教程将会给你展示如何一步步仅仅利用Box2D中的碰撞检测 （-不是物理的-）。我们将会创建一个简单的demo,一个车绕着屏幕开，当碾过cat时，cat会笑。是的，我承认，我有时是嗜血成性的。</p>
+
+<p>哈哈，测试一下更新。</p>
 </div>
 
 
@@ -117,8 +123,14 @@
   
 
 
-<time datetime="2013-08-30T00:15:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2013</time>
+<time datetime="2013-02-28T18:07:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2013</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/cocos2d/'>cocos2d</a>
+  
+</span>
 
 
     </p>
@@ -132,8 +144,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/" title="Previous Post: c++利用jni调用java的代码">&laquo; c++利用jni调用java的代码</a>
+        <a class="basic-alignment left" href="/blog/2013/02/28/sad/" title="Previous Post: sad">&laquo; sad</a>
       
+      
+        <a class="basic-alignment right" href="/blog/2013/03/01/blog-cocos2d/" title="Next Post: blog-cocos2d">blog-cocos2d &raquo;</a>
       
     </p>
   </footer>
@@ -207,8 +221,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://langxuelang.github.com/blog/2013/08/30/test/';
-        var disqus_url = 'http://langxuelang.github.com/blog/2013/08/30/test/';
+        var disqus_identifier = 'http://langxuelang.github.com/blog/2013/02/28/cocos2d-translate/';
+        var disqus_url = 'http://langxuelang.github.com/blog/2013/02/28/cocos2d-translate/';
         var disqus_script = 'embed.js';
       
     (function () {

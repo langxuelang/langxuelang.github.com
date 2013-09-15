@@ -4,7 +4,7 @@
   <title><![CDATA[雪狼技术博客]]></title>
   <link href="http://langxuelang.github.com/atom.xml" rel="self"/>
   <link href="http://langxuelang.github.com/"/>
-  <updated>2013-08-30T00:16:18+08:00</updated>
+  <updated>2013-09-15T16:19:26+08:00</updated>
   <id>http://langxuelang.github.com/</id>
   <author>
     <name><![CDATA[雪狼]]></name>
@@ -19,6 +19,292 @@
     <updated>2013-08-30T00:15:00+08:00</updated>
     <id>http://langxuelang.github.com/blog/2013/08/30/test</id>
     <content type="html"><![CDATA[
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[c++利用jni调用java的代码]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/"/>
+    <updated>2013-03-19T10:07:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code</id>
+    <content type="html"><![CDATA[<h1>起因</h1>
+
+<p>在公司的一个项目中，需要在cocos2d-x中调用android中java的代码，于是自己想了想，还是学一下比较好，这样能更加加深我对于编程的理解。</p>
+
+<h1>实践</h1>
+
+<p>于是自己开始在百度与google上搜索，终于搜索一篇关于cocos2d-x关于jni调用的文章。于是还是延续我以前学习的方法，直接将代码抄一遍，然后等到抄完之后也就理解的差不多了。
+<a href="http://www.cnblogs.com/Androider123/archive/2012/10/19/2730644.html">原文在这里</a>
+后来有搜索了一些，基本上就是抄这篇文章的。于是自己也开始写，将需要引用的一些库导入项目的库目录中。
+接下来就是条件编译，只有在android平台上的时候，我们才进行编译这段代码。</p>
+
+<!-- more -->
+
+
+<p>为了方便，我将代码贴了出来，如下:</p>
+
+<pre><code>#if(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)//条件编译语句
+    {
+            const char *message = "hello,xuelang";//需要传递到Java层的字符串
+            JniMethodInfo methodInfo;
+            bool isHave = JniHelper::getStaticMethodInfo(methodInfo,
+                    "com/kengdie/test/Test",//需要调用的Java文件
+                    "showMessageFromNative",//调用的方法名
+                    "(Ljava/lang/String;)V");//参数
+            if(isHave){
+                    CCLog("the showMessage method is exits");
+                    jstring StringArg = methodInfo.env-&gt;NewStringUTF(message);
+                    methodInfo.env-&gt;CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, StringArg);
+            }else{
+                    CCLog("the showMessage method is not exits");
+            }
+    }
+#endif
+</code></pre>
+
+<p>在这里原文没有解释清楚一些东西，我下面给大家解释一下。
+首先，我们会奇怪，为什么参数会是</p>
+
+<blockquote><p>(Ljava/lang/String;)V</p></blockquote>
+
+<p>这种形式，分别代表什么含义，别着急，让我下面慢慢给大家说：
+jni调用中，定义了一些关键字（类型）的签名（简写）</p>
+
+<p>&#8220;I&#8221; 表示整数</p>
+
+<p>&#8220;B&#8221; 表示byte</p>
+
+<p>&#8220;C&#8221; 表示 char</p>
+
+<p>&#8220;D&#8221; 表示 double</p>
+
+<p>&#8220;F&#8221; 表示float</p>
+
+<p>&#8220;J&#8221; 表示long</p>
+
+<p>&#8220;S&#8221; 表示short</p>
+
+<p>&#8220;V&#8221; 表示void</p>
+
+<p>&#8220;Z&#8221; 表示boolean</p>
+
+<p>&#8220;Ljava/lang/String;&#8221; 表示String</p>
+
+<blockquote><p>(Ljava/lang/String;)V</p></blockquote>
+
+<p>中，括号里面代表参数类型，括号外面代表返回值，这下大家应该明白了，其实调用的java函数对应的类型应该是void showMessageFromNative(String message)这样的形式。
+下面再写几种形式，让大家练习一下。</p>
+
+<blockquote><p>(ILjava/lang/String;)V
+(Ljava/lang/String;Ljava/lang/String;)V
+(ILjava/lang/String;)V</p></blockquote>
+
+<p>提醒大家的是，参数与参数之间不需要任何分割符，但是Ljava/lang/String;中的分号是自带的不能省去。</p>
+
+<p>了解完这个后，getStaticMethodInfo函数是用来初始化JniMethodInfo methodInfo;变量的，得到一些函数的基本信息，然后执行 methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, StringArg);便可以实现对java函数的调用了。有人说，为什么getStaticMethodInfo与CallStaticVoidMethod都是得到静态函数与执行静态函数，难道说，不能执行对象方法吗？
+答案是当然可以，不过，这里便出现一个问题，我们该如何得到类的对象呢，只有这样才能用类的对象去执行非静态函数。（详细的大家可以跟踪到jni源代码中去一探究竟，等到里面你会发现，jni其实就已经实现了功能了，为啥还有一个jnihelper呢，其实jnihelper是cocos2d-x为大家封装好的一个类，让大家用起来更方便）</p>
+
+<p>解决方法是这样的：
+大家可以先在java里面写一个静态成员函数，然后让其返回这个类的一个实例，这样，我们就可以利用getStaticMethodInfo与CallStaticVoidMethod在c++中得到一个jobject类型的对象，然后调用
+jdouble CallDoubleMethod(jobject obj, jmethodID methodID, &#8230;)将之前得到的jobject传进去
+于是便可以执行这个类对象的成员函数了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[问题总结]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/03/13/c-plus-plus-and-java-diffent/"/>
+    <updated>2013-03-13T19:21:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/03/13/c-plus-plus-and-java-diffent</id>
+    <content type="html"><![CDATA[<p>今天下午整整调试了一下午错误，其实回头看，是一个非常简单也非常傻的错误，但是，由于自己写代码过程的马虎与调试过程不注重方法，导致浪费了很多时间。
+问题描述：
+今天用cocos2d与box2d写那个colorball的游戏，在win32上运行，完全没有问题，但是当移植到android上时一直出bug，我开始一步步测试，但是仍然没有效果，刚开始以为是逻辑的问题，但是经过排查，很确定能排除逻辑问题。于是我又开始怀疑是多点触控引起的，于是将多点触控也关闭，但是bug还是不能消除。实在没有办法的情况下，只能请教陈星辉，他说可以打印出，变量看看值得情况，我刚开始也想这么做，但是由于eclipse的打印日志一直不能用，如果打印在屏幕上，又感觉挺麻烦。后来我实在没办法了，只能在屏幕上打印出来，这下突然一个int值是随机数， 让我有了警觉，查找原因，原来是我用memset的时候，空间大小指定错误导致一些int数组没有初始化。但是java对于没有初始化的变量通常是指定为0，所以在这里c++与java的差异性就体现出来了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[box2d凹多边形的问题(多个fixture)]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/03/08/the-box2d-multifixture-problem/"/>
+    <updated>2013-03-08T17:51:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/03/08/the-box2d-multifixture-problem</id>
+    <content type="html"><![CDATA[<p>从昨天开始一直纠结于一个问题，就是我做的colorball中，用cctouchmove，但是小球一直就是有一些消不完全。
+刚开始时怀疑cctouchmove的问题，由于cctouchmove在执行过程中，当用户鼠标或者手滑的很快的时候，倒是cctouchmove记录的点的个数严重不足，仅仅会记录几个离散的点。于是自己感觉是这方面的原因，所以今天早上开始写了一个自动补全点的函数，将剩下的空的点补全。可是，当写完后，进行测试，虽然可以解决一部分滑的过快导致的问题，但是还是没有完全解决有时候不能完全消去的问题，我是百思不得其解。</p>
+
+<!-- more -->
+
+
+<p>做的过程中我甚至有一种冲动说，不做了，就这样吧。但是我还是坚持了下来，下午我又重新整理了一下思路，初步怀疑是多边形的问题，于是我将ball设为一个，然后单独测试这个，并且将box2d中DrawDebugData这个功能开启，以利于我看清楚问题，终于我发现一个问题，box2d的凹多边形竟然是分开组装的，于是我看到了突破口。再进一步的测试中发现，在一个凹多变形中，TestPoint方法总是只能检测一个被分开的凸多边形，这一下我就蒙了，到底是为什么呢，我想了好长时间也没有想出来，但是我还是很高兴，至少我知道了问题的所在。于是我整理了一下情绪，继续找问题。于是我开始用万能的google来寻找问题，不过查了半天也是没有结果，最后在一个网站上发现原来，当一个body 去create多个b2fixture的时候，需要在用到它的时候GetFixtureList来遍历所有的fixture，虽然当时我写代码的时候，曾经在这里疑惑过，为什么是一个list呢， 但是由于结果对了，所以也就没有深究，这下怪只能怪自己当时不够打破砂锅问到底了。不过还是解决了问题，突然感觉还是非常高兴的。
+下面是遍历的方法。</p>
+
+<blockquote><p>for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
+{</p>
+
+<p>}</p></blockquote>
+
+<p>从这次教训中也必须吸取经验，以后有问题一定要以积极的态度去解决，并且一定要想到每一个小的细节。</p>
+
+<p>写这篇博客来记录自己这次问题解决的历程。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[blog-cocos2d]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/03/01/blog-cocos2d/"/>
+    <updated>2013-03-01T15:02:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/03/01/blog-cocos2d</id>
+    <content type="html"><![CDATA[<h1>一个实现了多点触控的CCMenu类</h1>
+
+<p>今天在做东西的时候，有一个问题一直没有解决，我的界面上有两个按钮，两个按钮分别绑定了不同的函数，但是，问题出现了，我想同时按下两个按钮的时候，只能响应一个，而另一个必须等待这个按钮抬起之后才能按下。</p>
+
+<p>后来想了想也只能用多点触控了。</p>
+
+<!-- more -->
+
+
+<p>于是我自己写了一个类，继承了CCMenu。由于CCMenu继承了CCLayer，而CCMenu中又重写了</p>
+
+<blockquote><p>virtual void registerWithTouchDispatcher()</p>
+
+<p>{</p>
+
+<p>CCDirector* pDirector = CCDirector::sharedDirector()；</p>
+
+<p>pDirector->getTouchDispatcher()->addTargetedDelegate(this, kCCMenuHandlerPriority, true);</p>
+
+<p>}</p></blockquote>
+
+<p>方法，这个方法就是用来开启单点触控的。
+于是我们找到了CCMenu只能单点击的原因。
+下面就开始写代码了。</p>
+
+<pre><code>#include "cocos2d.h"
+class CCMultiTouchMenu:public cocos2d::CCMenu
+{
+    public:
+    virtual void ccTouchesBegan(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    virtual void ccTouchesMoved(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    virtual void ccTouchesEnded(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    virtual void ccTouchesCancelled(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    static CCMultiTouchMenu * create();
+    void onEnter();
+    void onExit();
+    //virtual void registerWithTouchDispatcher();
+    bool init();
+    protected:
+    private:
+};
+</code></pre>
+
+<p>上面是我写的类的头文件，大概解释一下。我重写了</p>
+
+<blockquote><p>ccTouchesBegan</p>
+
+<p>ccTouchesMoved</p>
+
+<p>ccTouchesEnded</p>
+
+<p>ccTouchesCancelled</p></blockquote>
+
+<p>这四个函数，用来做自己的逻辑判断。同时我再自己的init函数里面做了如下操作</p>
+
+<blockquote><p>CCMenu::init();</p>
+
+<p>CCDirector::sharedDirector()->getTouchDispatcher()->addStandardDelegate(this,kCCMenuHandlerPriority);</p>
+
+<p>addStandardDelegate()函数的作用就是重新开启CCLayer中的多点触控（CCLayer默认开启的是这个）</p></blockquote>
+
+<p>然后简单介绍一下我的cpp文件</p>
+
+<pre><code>void CCMultiTouchMenu::ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent)
+{
+    CC_UNUSED_PARAM(pEvent);
+    if (m_eState != kCCMenuStateWaiting || ! m_bIsVisible || !m_bEnabled)
+    {
+        return ;
+    }
+
+    for (CCNode *c = this-&gt;m_pParent; c != NULL; c = c-&gt;getParent())
+    {
+        if (c-&gt;isVisible() == false)
+        {
+            return ;
+        }
+    }
+
+    for(CCSetIterator it = pTouches-&gt;begin();it!=pTouches-&gt;end();it++)
+    {
+        CCTouch *touchCur = (CCTouch *)*it;
+        touchCur-&gt;locationInView();
+        m_pSelectedItem = this-&gt;itemForTouch(touchCur);
+        if (m_pSelectedItem)
+        {
+            m_eState = kCCMenuStateWaiting;
+            m_pSelectedItem-&gt;selected();
+            m_pSelectedItem-&gt;activate();
+            return;
+        }
+    }
+}
+</code></pre>
+
+<p>原理就是遍历所有的触控点，然后分别让按钮进行响应其操作。</p>
+
+<p>下面我附上我的源码，有需要的同学可以下载哦。
+<a href="http://pan.baidu.com/share/link?shareid=330180&amp;uk=2970884173">CCMultiTouchMenu</a></p>
+
+<p>转载请标明出处原文地址：<a href=""></a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-translate]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/02/28/cocos2d-translate/"/>
+    <updated>2013-02-28T18:07:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/02/28/cocos2d-translate</id>
+    <content type="html"><![CDATA[<h2>如何在cocos2d-iphone中用Box2d来仅仅进行碰撞检测</h2>
+
+<p>当我们用cocos2D做游戏的时候，有时候你会发现你想用cocos2D里面的actions来移动你的物体，而不是用box2D这个物理引擎。然而你仍然可以利用box2D中支持的碰撞检测。
+<img src="../images/image/translate/ScreenshotSmall.jpg" alt="Alt Cats vs. Car!" /></p>
+
+<p>这个教程将会给你展示如何一步步仅仅利用Box2D中的碰撞检测 （-不是物理的-）。我们将会创建一个简单的demo,一个车绕着屏幕开，当碾过cat时，cat会笑。是的，我承认，我有时是嗜血成性的。</p>
+
+<p>哈哈，测试一下更新。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[sad]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/02/28/sad/"/>
+    <updated>2013-02-28T17:16:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/02/28/sad</id>
+    <content type="html"><![CDATA[<h1><center>纠结</center></h1>
+
+<hr />
+
+<p>搞了两天的github终于是完成了，也加上了评论。突然感觉好乱啊。</p>
+
+<!--more-->
+
+
+<p>啥也不想干了。
+还是好好整理一下自己的思路，再往下走吧</p>
+
+<blockquote><p>磨刀不误砍柴工，还是有道理的</p></blockquote>
+
+<ul>
+<li><p>首先</p>
+
+<p>  明确自己的方向：由于过一段时间肯定要开始做游戏，所以还是以熟悉游戏框架有基本功。
+  cocos2d与box2d两个比较重要</p></li>
+<li>然后
+  平常多学习一些c++的东西，强化编程能力。
+  算法与数据结构也是需要经常翻阅的。
+  适当的在网络编程与多线程方面下点功夫。
+  设计模式这个东西也是需要掌握的。
+  希望自己可以参加一两个开源项目，深化自己的能力。
+  还有什么暂时没想起来，以后再加。</li>
+</ul>
+
 ]]></content>
   </entry>
   

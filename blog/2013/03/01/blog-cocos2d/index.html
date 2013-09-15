@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>blog-cocos2d - 雪狼技术博客</title>
+  <meta name="author" content="雪狼">
+
+  
+  <meta name="description" content="一个实现了多点触控的CCMenu类 今天在做东西的时候，有一个问题一直没有解决，我的界面上有两个按钮，两个按钮分别绑定了不同的函数，但是，问题出现了，我想同时按下两个按钮的时候，只能响应一个，而另一个必须等待这个按钮抬起之后才能按下。 后来想了想也只能用多点触控了。 于是我自己写了一个类， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://langxuelang.github.com/blog/2013/03/01/blog-cocos2d/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="雪狼技术博客" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">雪狼技术博客</a></h1>
+  
+    <h2>记录程序路上的点点滴滴.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:langxuelang.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">关于我</a></li>
+  <li><a href="www.gaotenglife.com/about-site">关于站点</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Blog-cocos2d</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-01T15:02:00+08:00" pubdate data-updated="true">Mar 1<span>st</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h1>一个实现了多点触控的CCMenu类</h1>
+
+<p>今天在做东西的时候，有一个问题一直没有解决，我的界面上有两个按钮，两个按钮分别绑定了不同的函数，但是，问题出现了，我想同时按下两个按钮的时候，只能响应一个，而另一个必须等待这个按钮抬起之后才能按下。</p>
+
+<p>后来想了想也只能用多点触控了。</p>
+
+<!-- more -->
+
+
+<p>于是我自己写了一个类，继承了CCMenu。由于CCMenu继承了CCLayer，而CCMenu中又重写了</p>
+
+<blockquote><p>virtual void registerWithTouchDispatcher()</p>
+
+<p>{</p>
+
+<p>CCDirector* pDirector = CCDirector::sharedDirector()；</p>
+
+<p>pDirector->getTouchDispatcher()->addTargetedDelegate(this, kCCMenuHandlerPriority, true);</p>
+
+<p>}</p></blockquote>
+
+<p>方法，这个方法就是用来开启单点触控的。
+于是我们找到了CCMenu只能单点击的原因。
+下面就开始写代码了。</p>
+
+<pre><code>#include "cocos2d.h"
+class CCMultiTouchMenu:public cocos2d::CCMenu
+{
+    public:
+    virtual void ccTouchesBegan(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    virtual void ccTouchesMoved(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    virtual void ccTouchesEnded(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    virtual void ccTouchesCancelled(cocos2d::CCSet *pTouches, cocos2d::CCEvent *pEvent);
+    static CCMultiTouchMenu * create();
+    void onEnter();
+    void onExit();
+    //virtual void registerWithTouchDispatcher();
+    bool init();
+    protected:
+    private:
+};
+</code></pre>
+
+<p>上面是我写的类的头文件，大概解释一下。我重写了</p>
+
+<blockquote><p>ccTouchesBegan</p>
+
+<p>ccTouchesMoved</p>
+
+<p>ccTouchesEnded</p>
+
+<p>ccTouchesCancelled</p></blockquote>
+
+<p>这四个函数，用来做自己的逻辑判断。同时我再自己的init函数里面做了如下操作</p>
+
+<blockquote><p>CCMenu::init();</p>
+
+<p>CCDirector::sharedDirector()->getTouchDispatcher()->addStandardDelegate(this,kCCMenuHandlerPriority);</p>
+
+<p>addStandardDelegate()函数的作用就是重新开启CCLayer中的多点触控（CCLayer默认开启的是这个）</p></blockquote>
+
+<p>然后简单介绍一下我的cpp文件</p>
+
+<pre><code>void CCMultiTouchMenu::ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent)
+{
+    CC_UNUSED_PARAM(pEvent);
+    if (m_eState != kCCMenuStateWaiting || ! m_bIsVisible || !m_bEnabled)
+    {
+        return ;
+    }
+
+    for (CCNode *c = this-&gt;m_pParent; c != NULL; c = c-&gt;getParent())
+    {
+        if (c-&gt;isVisible() == false)
+        {
+            return ;
+        }
+    }
+
+    for(CCSetIterator it = pTouches-&gt;begin();it!=pTouches-&gt;end();it++)
+    {
+        CCTouch *touchCur = (CCTouch *)*it;
+        touchCur-&gt;locationInView();
+        m_pSelectedItem = this-&gt;itemForTouch(touchCur);
+        if (m_pSelectedItem)
+        {
+            m_eState = kCCMenuStateWaiting;
+            m_pSelectedItem-&gt;selected();
+            m_pSelectedItem-&gt;activate();
+            return;
+        }
+    }
+}
+</code></pre>
+
+<p>原理就是遍历所有的触控点，然后分别让按钮进行响应其操作。</p>
+
+<p>下面我附上我的源码，有需要的同学可以下载哦。
+<a href="http://pan.baidu.com/share/link?shareid=330180&amp;uk=2970884173">CCMultiTouchMenu</a></p>
+
+<p>转载请标明出处原文地址：<a href=""></a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">雪狼</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-01T15:02:00+08:00" pubdate data-updated="true">Mar 1<span>st</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/02/28/cocos2d-translate/" title="Previous Post: cocos2d-translate">&laquo; cocos2d-translate</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/03/08/the-box2d-multifixture-problem/" title="Next Post: box2d凹多边形的问题(多个fixture)">box2d凹多边形的问题(多个fixture) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/30/test/">test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/">c++利用jni调用java的代码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/13/c-plus-plus-and-java-diffent/">问题总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/08/the-box2d-multifixture-problem/">box2d凹多边形的问题(多个fixture)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/01/blog-cocos2d/">blog-cocos2d</a>
+      </li>
+    
+  </ul>
+</section>
+﻿<section>
+  <h1>Here Is xuelang</h1>
+  <ul>
+    <b>雪狼</b>
+	<br>热爱编程
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - 雪狼 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'xuelang';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://langxuelang.github.com/blog/2013/03/01/blog-cocos2d/';
+        var disqus_url = 'http://langxuelang.github.com/blog/2013/03/01/blog-cocos2d/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -33,7 +33,6 @@
   
 
 </head>
-
 <body   >
   <header role="banner"><hgroup>
   <h1><a href="/">雪狼技术博客</a></h1>
@@ -59,6 +58,7 @@
   <li><a href="/">Blog</a></li>
   <li><a href="/blog/archives">Archives</a></li>
   <li><a href="/about">关于我</a></li>
+  <li><a href="www.gaotenglife.com/about-site">关于站点</a></li>
 </ul>
 
 </nav>
@@ -100,6 +100,281 @@
   <div class="entry-content">
 </div>
   
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/">C++利用jni调用java的代码</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-19T10:07:00+08:00" pubdate data-updated="true">Mar 19<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>起因</h1>
+
+<p>在公司的一个项目中，需要在cocos2d-x中调用android中java的代码，于是自己想了想，还是学一下比较好，这样能更加加深我对于编程的理解。</p>
+
+<h1>实践</h1>
+
+<p>于是自己开始在百度与google上搜索，终于搜索一篇关于cocos2d-x关于jni调用的文章。于是还是延续我以前学习的方法，直接将代码抄一遍，然后等到抄完之后也就理解的差不多了。
+<a href="http://www.cnblogs.com/Androider123/archive/2012/10/19/2730644.html">原文在这里</a>
+后来有搜索了一些，基本上就是抄这篇文章的。于是自己也开始写，将需要引用的一些库导入项目的库目录中。
+接下来就是条件编译，只有在android平台上的时候，我们才进行编译这段代码。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/13/c-plus-plus-and-java-diffent/">问题总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-13T19:21:00+08:00" pubdate data-updated="true">Mar 13<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/03/13/c-plus-plus-and-java-diffent/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>今天下午整整调试了一下午错误，其实回头看，是一个非常简单也非常傻的错误，但是，由于自己写代码过程的马虎与调试过程不注重方法，导致浪费了很多时间。
+问题描述：
+今天用cocos2d与box2d写那个colorball的游戏，在win32上运行，完全没有问题，但是当移植到android上时一直出bug，我开始一步步测试，但是仍然没有效果，刚开始以为是逻辑的问题，但是经过排查，很确定能排除逻辑问题。于是我又开始怀疑是多点触控引起的，于是将多点触控也关闭，但是bug还是不能消除。实在没有办法的情况下，只能请教陈星辉，他说可以打印出，变量看看值得情况，我刚开始也想这么做，但是由于eclipse的打印日志一直不能用，如果打印在屏幕上，又感觉挺麻烦。后来我实在没办法了，只能在屏幕上打印出来，这下突然一个int值是随机数， 让我有了警觉，查找原因，原来是我用memset的时候，空间大小指定错误导致一些int数组没有初始化。但是java对于没有初始化的变量通常是指定为0，所以在这里c++与java的差异性就体现出来了。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/08/the-box2d-multifixture-problem/">Box2d凹多边形的问题(多个fixture)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-08T17:51:00+08:00" pubdate data-updated="true">Mar 8<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/03/08/the-box2d-multifixture-problem/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>从昨天开始一直纠结于一个问题，就是我做的colorball中，用cctouchmove，但是小球一直就是有一些消不完全。
+刚开始时怀疑cctouchmove的问题，由于cctouchmove在执行过程中，当用户鼠标或者手滑的很快的时候，倒是cctouchmove记录的点的个数严重不足，仅仅会记录几个离散的点。于是自己感觉是这方面的原因，所以今天早上开始写了一个自动补全点的函数，将剩下的空的点补全。可是，当写完后，进行测试，虽然可以解决一部分滑的过快导致的问题，但是还是没有完全解决有时候不能完全消去的问题，我是百思不得其解。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/08/the-box2d-multifixture-problem/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/01/blog-cocos2d/">Blog-cocos2d</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-01T15:02:00+08:00" pubdate data-updated="true">Mar 1<span>st</span>, 2013</time>
+        
+         | <a href="/blog/2013/03/01/blog-cocos2d/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>一个实现了多点触控的CCMenu类</h1>
+
+<p>今天在做东西的时候，有一个问题一直没有解决，我的界面上有两个按钮，两个按钮分别绑定了不同的函数，但是，问题出现了，我想同时按下两个按钮的时候，只能响应一个，而另一个必须等待这个按钮抬起之后才能按下。</p>
+
+<p>后来想了想也只能用多点触控了。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/01/blog-cocos2d/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/28/cocos2d-translate/">Cocos2d-translate</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-28T18:07:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/02/28/cocos2d-translate/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>如何在cocos2d-iphone中用Box2d来仅仅进行碰撞检测</h2>
+
+<p>当我们用cocos2D做游戏的时候，有时候你会发现你想用cocos2D里面的actions来移动你的物体，而不是用box2D这个物理引擎。然而你仍然可以利用box2D中支持的碰撞检测。
+<img src="../images/image/translate/ScreenshotSmall.jpg" alt="Alt Cats vs. Car!" /></p>
+
+<p>这个教程将会给你展示如何一步步仅仅利用Box2D中的碰撞检测 （-不是物理的-）。我们将会创建一个简单的demo,一个车绕着屏幕开，当碾过cat时，cat会笑。是的，我承认，我有时是嗜血成性的。</p>
+
+<p>哈哈，测试一下更新。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/28/sad/">Sad</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-28T17:16:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/02/28/sad/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1><center>纠结</center></h1>
+
+<hr />
+
+<p>搞了两天的github终于是完成了，也加上了评论。突然感觉好乱啊。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/02/28/sad/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -209,13 +484,28 @@
       </li>
     
       <li class="post">
-        <a href="/blog/2013/02/28/come-beijing/">来到北京总结</a>
+        <a href="/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/">c++利用jni调用java的代码</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/02/28/hello/">第一篇博客在octopress</a>
+        <a href="/blog/2013/03/13/c-plus-plus-and-java-diffent/">问题总结</a>
       </li>
     
+      <li class="post">
+        <a href="/blog/2013/03/08/the-box2d-multifixture-problem/">box2d凹多边形的问题(多个fixture)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/01/blog-cocos2d/">blog-cocos2d</a>
+      </li>
+    
+  </ul>
+</section>
+﻿<section>
+  <h1>Here Is xuelang</h1>
+  <ul>
+    <b>雪狼</b>
+	<br>热爱编程
   </ul>
 </section>
 

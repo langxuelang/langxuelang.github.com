@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 交叉编译 | 雪狼技术博客]]></title>
+  <link href="http://langxuelang.github.com/blog/categories/交叉编译/atom.xml" rel="self"/>
+  <link href="http://langxuelang.github.com/"/>
+  <updated>2013-09-15T16:19:26+08:00</updated>
+  <id>http://langxuelang.github.com/</id>
+  <author>
+    <name><![CDATA[雪狼]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[c++利用jni调用java的代码]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code/"/>
+    <updated>2013-03-19T10:07:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/03/19/c-plus-plus-user-jni-to-use-java-code</id>
+    <content type="html"><![CDATA[<h1>起因</h1>
+
+<p>在公司的一个项目中，需要在cocos2d-x中调用android中java的代码，于是自己想了想，还是学一下比较好，这样能更加加深我对于编程的理解。</p>
+
+<h1>实践</h1>
+
+<p>于是自己开始在百度与google上搜索，终于搜索一篇关于cocos2d-x关于jni调用的文章。于是还是延续我以前学习的方法，直接将代码抄一遍，然后等到抄完之后也就理解的差不多了。
+<a href="http://www.cnblogs.com/Androider123/archive/2012/10/19/2730644.html">原文在这里</a>
+后来有搜索了一些，基本上就是抄这篇文章的。于是自己也开始写，将需要引用的一些库导入项目的库目录中。
+接下来就是条件编译，只有在android平台上的时候，我们才进行编译这段代码。</p>
+
+<!-- more -->
+
+
+<p>为了方便，我将代码贴了出来，如下:</p>
+
+<pre><code>#if(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)//条件编译语句
+    {
+            const char *message = "hello,xuelang";//需要传递到Java层的字符串
+            JniMethodInfo methodInfo;
+            bool isHave = JniHelper::getStaticMethodInfo(methodInfo,
+                    "com/kengdie/test/Test",//需要调用的Java文件
+                    "showMessageFromNative",//调用的方法名
+                    "(Ljava/lang/String;)V");//参数
+            if(isHave){
+                    CCLog("the showMessage method is exits");
+                    jstring StringArg = methodInfo.env-&gt;NewStringUTF(message);
+                    methodInfo.env-&gt;CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, StringArg);
+            }else{
+                    CCLog("the showMessage method is not exits");
+            }
+    }
+#endif
+</code></pre>
+
+<p>在这里原文没有解释清楚一些东西，我下面给大家解释一下。
+首先，我们会奇怪，为什么参数会是</p>
+
+<blockquote><p>(Ljava/lang/String;)V</p></blockquote>
+
+<p>这种形式，分别代表什么含义，别着急，让我下面慢慢给大家说：
+jni调用中，定义了一些关键字（类型）的签名（简写）</p>
+
+<p>"I" 表示整数</p>
+
+<p>"B" 表示byte</p>
+
+<p>"C" 表示 char</p>
+
+<p>"D" 表示 double</p>
+
+<p>"F" 表示float</p>
+
+<p>"J" 表示long</p>
+
+<p>"S" 表示short</p>
+
+<p>"V" 表示void</p>
+
+<p>"Z" 表示boolean</p>
+
+<p>"Ljava/lang/String;" 表示String</p>
+
+<blockquote><p>(Ljava/lang/String;)V</p></blockquote>
+
+<p>中，括号里面代表参数类型，括号外面代表返回值，这下大家应该明白了，其实调用的java函数对应的类型应该是void showMessageFromNative(String message)这样的形式。
+下面再写几种形式，让大家练习一下。</p>
+
+<blockquote><p>(ILjava/lang/String;)V
+(Ljava/lang/String;Ljava/lang/String;)V
+(ILjava/lang/String;)V</p></blockquote>
+
+<p>提醒大家的是，参数与参数之间不需要任何分割符，但是Ljava/lang/String;中的分号是自带的不能省去。</p>
+
+<p>了解完这个后，getStaticMethodInfo函数是用来初始化JniMethodInfo methodInfo;变量的，得到一些函数的基本信息，然后执行 methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, StringArg);便可以实现对java函数的调用了。有人说，为什么getStaticMethodInfo与CallStaticVoidMethod都是得到静态函数与执行静态函数，难道说，不能执行对象方法吗？
+答案是当然可以，不过，这里便出现一个问题，我们该如何得到类的对象呢，只有这样才能用类的对象去执行非静态函数。（详细的大家可以跟踪到jni源代码中去一探究竟，等到里面你会发现，jni其实就已经实现了功能了，为啥还有一个jnihelper呢，其实jnihelper是cocos2d-x为大家封装好的一个类，让大家用起来更方便）</p>
+
+<p>解决方法是这样的：
+大家可以先在java里面写一个静态成员函数，然后让其返回这个类的一个实例，这样，我们就可以利用getStaticMethodInfo与CallStaticVoidMethod在c++中得到一个jobject类型的对象，然后调用
+jdouble CallDoubleMethod(jobject obj, jmethodID methodID, ...)将之前得到的jobject传进去
+于是便可以执行这个类对象的成员函数了。</p>
+]]></content>
+  </entry>
+  
+</feed>

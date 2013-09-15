@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cocos2d | 雪狼技术博客]]></title>
+  <link href="http://langxuelang.github.com/blog/categories/cocos2d/atom.xml" rel="self"/>
+  <link href="http://langxuelang.github.com/"/>
+  <updated>2013-09-15T16:19:26+08:00</updated>
+  <id>http://langxuelang.github.com/</id>
+  <author>
+    <name><![CDATA[雪狼]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-translate]]></title>
+    <link href="http://langxuelang.github.com/blog/2013/02/28/cocos2d-translate/"/>
+    <updated>2013-02-28T18:07:00+08:00</updated>
+    <id>http://langxuelang.github.com/blog/2013/02/28/cocos2d-translate</id>
+    <content type="html"><![CDATA[<h2>如何在cocos2d-iphone中用Box2d来仅仅进行碰撞检测</h2>
+
+<p>当我们用cocos2D做游戏的时候，有时候你会发现你想用cocos2D里面的actions来移动你的物体，而不是用box2D这个物理引擎。然而你仍然可以利用box2D中支持的碰撞检测。
+<img src="../images/image/translate/ScreenshotSmall.jpg" alt="Alt Cats vs. Car!" /></p>
+
+<p>这个教程将会给你展示如何一步步仅仅利用Box2D中的碰撞检测 （-不是物理的-）。我们将会创建一个简单的demo,一个车绕着屏幕开，当碾过cat时，cat会笑。是的，我承认，我有时是嗜血成性的。</p>
+
+<p>哈哈，测试一下更新。</p>
+]]></content>
+  </entry>
+  
+</feed>
