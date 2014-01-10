@@ -3,7 +3,7 @@ layout: post
 title: "最近状况总结"
 date: 2013-12-22 21:35
 comments: true
-categories:selfmotion
+categories:
 ---
 ##今年回顾
 今年是2013年，也是自己毕业后的第一年，在年初的时候，自己给自己定了一个时间计划安排表如下：
