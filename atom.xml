@@ -4,7 +4,7 @@
   <title><![CDATA[雪狼技术博客]]></title>
   <link href="http://langxuelang.github.com/atom.xml" rel="self"/>
   <link href="http://langxuelang.github.com/"/>
-  <updated>2014-01-12T19:36:48+08:00</updated>
+  <updated>2014-05-07T20:27:58+08:00</updated>
   <id>http://langxuelang.github.com/</id>
   <author>
     <name><![CDATA[雪狼]]></name>
@@ -85,14 +85,11 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[unity learning]]></title>
+    <title type="html"><![CDATA[unity学习体会]]></title>
     <link href="http://langxuelang.github.com/blog/2013/11/16/unity-learning/"/>
     <updated>2013-11-16T11:31:00+08:00</updated>
     <id>http://langxuelang.github.com/blog/2013/11/16/unity-learning</id>
-    <content type="html"><![CDATA[<center><h1>unity学习体会</center>
-
-
-<p>  最近开始在项目中学习使用unity，由于是脚本式编程语言，所以与以前cocos2d-x的本地编译程序流程不同，你不必去很在意程序是如何顺序执行的，而你的任务是让世界中的每一个物体都有自己的脚本。在此过程中也发现，unity的项目管理现在还是很欠缺，不知道应该如何更好的将代码组织起来，形成架构方面的东西。</p>
+    <content type="html"><![CDATA[<p>  最近开始在项目中学习使用unity，由于是脚本式编程语言，所以与以前cocos2d-x的本地编译程序流程不同，你不必去很在意程序是如何顺序执行的，而你的任务是让世界中的每一个物体都有自己的脚本。在此过程中也发现，unity的项目管理现在还是很欠缺，不知道应该如何更好的将代码组织起来，形成架构方面的东西。</p>
 ]]></content>
   </entry>
   
