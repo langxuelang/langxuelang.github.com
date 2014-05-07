@@ -1,10 +1,9 @@
 ---
 layout: post
-title: "unity learning"
+title: "unity学习体会"
 date: 2013-11-16 11:31
 comments: true
 categories: unity
 ---
 
-<center><h1>unity学习体会</center>
   最近开始在项目中学习使用unity，由于是脚本式编程语言，所以与以前cocos2d-x的本地编译程序流程不同，你不必去很在意程序是如何顺序执行的，而你的任务是让世界中的每一个物体都有自己的脚本。在此过程中也发现，unity的项目管理现在还是很欠缺，不知道应该如何更好的将代码组织起来，形成架构方面的东西。
